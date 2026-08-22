@@ -1,0 +1,19 @@
+# Contexto del proyecto con notas personales
+CONTEXT.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Streamlit (por si se necesitan claves o tokens en el despliegue en Streamlit)
+.streamlit/secrets.toml
+
+# Variables de entorno / credenciales
+.env
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
