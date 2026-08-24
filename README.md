@@ -36,7 +36,8 @@ agroindice-cafe/
 │   ├── app.py
 │   ├── pages/
 │   └── utils/
-└── docs/                    # PDFs de anteproyecto, prototipo fachada, tabla de requerimientos
+├── docs/                    # PDFs de anteproyecto, prototipo fachada, tabla de requerimientos
+└── notebooks/               # notebooks de trabajo (drafts de scripts, modelos, notebooks de clase de Gerencia)
 ```
 
 ## Convenciones
