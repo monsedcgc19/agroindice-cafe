@@ -30,7 +30,7 @@ agroindice-cafe/
 │   │   ├── ndvi_evi/
 │   │   └── rendimiento/
 │   └── processed/           # datos procesados
-├── scripts/etl/             # 01_extract → 02_extract → 03_clean_transform → 04_build_dataset
+├── scripts/etl/             # 01_extract → 02_extract → 03_extract → 04_clean_transform → 05_build_dataset
 ├── models/                  # un script por modelo candidato (RF, XGBoost, SVM, NN)
 ├── dashboard/               # app Streamlit, una página por pantalla del mockup
 │   ├── app.py
