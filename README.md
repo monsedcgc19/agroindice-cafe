@@ -25,11 +25,12 @@ Nota: todos apoyan en la creación y experimentación de modelos.
 ```
 agroindice-cafe/
 ├── data/
-│   ├── raw/                 # descargas originales
+│   ├── raw/                 # descargas originales (salida de scripts 01,02,03_extract)
 │   │   ├── clima/
 │   │   ├── ndvi_evi/
 │   │   └── rendimiento/
-│   └── processed/           # datos procesados
+│   ├── clean/               # datos limpios (salida de 04_clean_transform)
+│   └── processed/           # datos procesados (salida de 05_build_dataset)
 ├── scripts/etl/             # 01_extract → 02_extract → 03_extract → 04_clean_transform → 05_build_dataset
 ├── models/                  # un script por modelo candidato (RF, XGBoost, SVM, NN)
 ├── dashboard/               # app Streamlit, una página por pantalla del mockup
