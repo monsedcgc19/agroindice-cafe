@@ -4,7 +4,7 @@
 Input:
   - data/raw/clima/era5_diario.csv
   - data/raw/clima/et_mensual.csv
-  - data/raw/ndvi_evi/modis_16dias.csv
+  - data/raw/ndvi_evi/modis_16dias_qa_filtrado.csv
 
 Output:
   - data/clean/clima/era5_diario.csv
@@ -32,6 +32,16 @@ Qué hace este script (y qué no hace):
     detección/marcado.
   - NO imputa, NO elimina filas, NO alinea temporalmente entre fuentes — eso
     queda se hace en 05_build_dataset.py.
+
+Fuente de NDVI/EVI (decisión 2026-08-29): se usa
+`modis_16dias_qa_filtrado.csv` (enmascarado por `SummaryQA` en {0,1} en
+03_extract_modis.py) en vez de `modis_16dias.csv` (sin filtrar). Se detectó
+que el promedio anual de NDVI/EVI sin filtrar subía de forma sostenida a
+partir de 2023 mientras el clima (ERA5/FLDAS) se mantenía estable en el
+mismo período — ver notebooks/debug_random_forest.ipynb. Al filtrar por
+calidad de píxel esa tendencia casi desaparece, así que se adopta la versión
+filtrada como fuente oficial de aquí en adelante. `modis_16dias.csv` original
+se conserva en data/raw/ solo como referencia histórica de la comparación.
 """
 
 from pathlib import Path
@@ -44,7 +54,9 @@ CLEAN_DIR = Path(__file__).resolve().parents[2] / "data" / "clean"
 RAW_PATHS = {
     "era5_diario": RAW_DIR / "clima" / "era5_diario.csv",
     "et_mensual": RAW_DIR / "clima" / "et_mensual.csv",
-    "modis_16dias": RAW_DIR / "ndvi_evi" / "modis_16dias.csv",
+    # Versión filtrada por SummaryQA (0,1) — ver nota en el docstring del módulo.
+    # data/raw/ndvi_evi/modis_16dias.csv (sin filtrar) se conserva solo como referencia.
+    "modis_16dias": RAW_DIR / "ndvi_evi" / "modis_16dias_qa_filtrado.csv",
 }
 
 CLEAN_PATHS = {

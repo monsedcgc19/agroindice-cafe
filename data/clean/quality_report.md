@@ -23,7 +23,7 @@ Valores de region: ['Cauca', 'Narino']
 
 ## modis_16dias
 
-- Archivo crudo: `raw\ndvi_evi\modis_16dias.csv`
+- Archivo crudo: `raw\ndvi_evi\modis_16dias_qa_filtrado.csv`
 - Archivo limpio: `clean\ndvi_evi\modis_16dias.csv`
 - Filas: 1218
 - Duplicados (date+region), filas marcadas: 0
@@ -31,19 +31,19 @@ Valores de region: ['Cauca', 'Narino']
 
 ## Estadísticas descriptivas por variable y archivo
 
-| archivo      | variable          |        min |       max |     media |       std |   n_validos |
-|:-------------|:------------------|-----------:|----------:|----------:|----------:|------------:|
-| era5_diario  | dewpoint_c        | 11.9416    | 19.7043   | 16.7812   | 1.19074   |       19352 |
-| era5_diario  | lai_high          |  3.7401    |  4.04902  |  3.90017  | 0.0764256 |       19352 |
-| era5_diario  | pet_mm            |  1.21946   | 10.6209   |  5.16004  | 1.22396   |       19352 |
-| era5_diario  | precip_mm         |  0.444378  | 95.1988   | 16.3168   | 9.81535   |       19352 |
-| era5_diario  | soil_moist_layer1 |  0.345445  |  0.457582 |  0.435721 | 0.0124757 |       19352 |
-| era5_diario  | tmax_c            | 17.8354    | 26.1039   | 22.4004   | 1.1338    |       19352 |
-| era5_diario  | tmean_c           | 16.4063    | 22.2096   | 19.0321   | 1.02633   |       19352 |
-| era5_diario  | tmin_c            | 11.8637    | 20.0517   | 16.7412   | 1.27213   |       19352 |
-| et_mensual   | et_mm             |  2.86951   |  4.50902  |  3.6799   | 0.292097  |         634 |
-| modis_16dias | evi               |  0.0785408 |  0.496757 |  0.360541 | 0.0491958 |        1218 |
-| modis_16dias | ndvi              |  0.102689  |  0.807066 |  0.55381  | 0.0870585 |        1218 |
+| archivo      | variable          |       min |       max |     media |       std |   n_validos |
+|:-------------|:------------------|----------:|----------:|----------:|----------:|------------:|
+| era5_diario  | dewpoint_c        | 11.9416   | 19.7043   | 16.7812   | 1.19074   |       19352 |
+| era5_diario  | lai_high          |  3.7401   |  4.04902  |  3.90017  | 0.0764256 |       19352 |
+| era5_diario  | pet_mm            |  1.21946  | 10.6209   |  5.16004  | 1.22396   |       19352 |
+| era5_diario  | precip_mm         |  0.444378 | 95.1988   | 16.3168   | 9.81535   |       19352 |
+| era5_diario  | soil_moist_layer1 |  0.345445 |  0.457582 |  0.435721 | 0.0124757 |       19352 |
+| era5_diario  | tmax_c            | 17.8354   | 26.1039   | 22.4004   | 1.1338    |       19352 |
+| era5_diario  | tmean_c           | 16.4063   | 22.2096   | 19.0321   | 1.02633   |       19352 |
+| era5_diario  | tmin_c            | 11.8637   | 20.0517   | 16.7412   | 1.27213   |       19352 |
+| et_mensual   | et_mm             |  2.86951  |  4.50902  |  3.6799   | 0.292097  |         634 |
+| modis_16dias | evi               |  0.347847 |  0.577413 |  0.463174 | 0.0338684 |        1218 |
+| modis_16dias | ndvi              |  0.605759 |  0.837154 |  0.757351 | 0.0358558 |        1218 |
 
 ## % de nulos reales por variable y archivo
 
