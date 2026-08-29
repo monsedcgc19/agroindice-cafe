@@ -46,6 +46,16 @@ Reglas de alineación:
           duración de 16 días de calendario);
       (b) las primeras ventanas de cada región que no alcanzan a tener
           lag2 (necesitan 2 ventanas previas reales en esa región).
+
+Fuente de NDVI/EVI (decisión 2026-08-29): `data/clean/ndvi_evi/modis_16dias.csv`
+ahora proviene de la extracción filtrada por `SummaryQA` (ver
+03_extract_modis.py y 04_clean_transform.py) en vez de la extracción
+original sin filtrar — se detectó que el promedio anual de NDVI/EVI sin
+filtrar subía de forma sostenida a partir de 2023 mientras el clima se
+mantenía estable en el mismo período (artefacto de píxeles de nube/nieve),
+ver notebooks/debug_random_forest.ipynb. No cambia ninguna regla de
+alineación de este script, solo el contenido de NDVI/EVI que entra por
+data/clean/.
 """
 
 from pathlib import Path
