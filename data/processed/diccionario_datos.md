@@ -37,6 +37,13 @@
 | et_resolution | categórico fijo | FLDAS / NASA (vía Google Earth Engine) | 0.00% | Siempre 'monthly' — deja explícito que et_mm es de menor resolución temporal que el resto de variables |
 | deficit_hidrico | mm | Derivado (ERA5-Land) | 0.00% | precip_mm_lag0 - pet_mm_lag0 |
 | soil_moist_anomaly | m3/m3 | Derivado (ERA5-Land) | 0.00% | soil_moist_layer1_lag0 - promedio histórico de esa variable por región y día del año de inicio de ventana, a través de todos los años disponibles |
+| ndvi_lag_1year | índice (-1 a 1) | MODIS MOD13Q1.061 | 3.47% | NDVI de ~1 año atrás (23 ventanas atrás) en la misma región — señal de persistencia/nivel, no de la ventana actual |
+| evi_lag_1year | índice (-1 a 1) | MODIS MOD13Q1.061 | 3.47% | EVI de ~1 año atrás (23 ventanas atrás) en la misma región — señal de persistencia/nivel, no de la ventana actual |
+| deficit_hidrico_trend2y | mm | Derivado (ERA5-Land) | 3.63% | Promedio móvil retrospectivo de deficit_hidrico (~2 años, mínimo ~1 año de historia), por región — régimen climático de largo plazo |
+| ndvi_lag1w | índice (-1 a 1) | MODIS MOD13Q1.061 | 0.00% | NDVI de 1 ventana atrás (~16 días) en la misma región — autocorrelación de corto plazo, la más fuerte medida entre todos los rezagos probados |
+| evi_lag1w | índice (-1 a 1) | MODIS MOD13Q1.061 | 0.00% | EVI de 1 ventana atrás (~16 días) en la misma región — autocorrelación de corto plazo |
+| doy_sin | adimensional (-1 a 1) | Derivado (fecha) | 0.00% | sin(2*pi*día_del_año/365.25) — codificación cíclica de estacionalidad |
+| doy_cos | adimensional (-1 a 1) | Derivado (fecha) | 0.00% | cos(2*pi*día_del_año/365.25) — codificación cíclica de estacionalidad |
 
 Nota: no se calcula ninguna anomalía de NDVI/EVI como variable predictora — NDVI/EVI es la variable Y, así que cualquier anomalía derivada de ella misma sería fuga de información hacia el modelo.
 
