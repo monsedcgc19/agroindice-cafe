@@ -56,10 +56,60 @@ mantenía estable en el mismo período (artefacto de píxeles de nube/nieve),
 ver notebooks/debug_random_forest.ipynb. No cambia ninguna regla de
 alineación de este script, solo el contenido de NDVI/EVI que entra por
 data/clean/.
+
+Features nuevas (decisión 2026-08-30) — experimento para atacar el problema
+de calibración de nivel detectado en el modelado (Random Forest/XGBoost
+capturan bien la forma de NDVI, Pearson alto, pero el nivel de test_final
+queda ligeramente por encima del histórico de train_val, lo que hunde el
+R²; ver notebooks/debug_random_forest.ipynb y results/experiment_log.csv):
+  - `ndvi_lag_1year` / `evi_lag_1year`: valor de NDVI/EVI de ~1 año atrás
+    (23 ventanas atrás — con la duración promedio real de ventana de este
+    dataset, ~15.9 días, 23 ventanas ≈ 365 días), por región. Le da al
+    modelo una señal directa de en qué "nivel" está la vegetación
+    actualmente (persistencia estacional), sin ser una anomalía calculada
+    sobre toda la serie. Se usa un rezago de ~1 año (no de 1-2 ventanas)
+    a propósito: un rezago de NDVI/EVI muy reciente dependería de que el
+    último composite MODIS ya esté publicado al momento de predecir, y
+    MODIS tiene su propio rezago de disponibilidad real (ver
+    01/02/03_extract_*.py) — con 1 año de rezago esa disponibilidad nunca
+    es un problema en una implementación real. No es fuga de información:
+    es el valor real medido en una ventana muy anterior, no del futuro.
+  - `deficit_hidrico_trend2y`: promedio móvil retrospectivo (ventana de 46
+    ventanas ≈ 2 años, mínimo 23 ventanas ≈ 1 año de historia para
+    calcularlo) de `deficit_hidrico`, por región. Da una señal de régimen
+    climático de más largo plazo (más allá de los lags cortos de 0-2
+    ventanas), construida solo con ERA5-Land (sin el problema de
+    disponibilidad de MODIS).
+  - Ninguna de las dos requiere imputación: quedan como NaN real en las
+    primeras ventanas de cada región donde no hay suficiente historia
+    (23 o 46 ventanas atrás según el caso) — mismo criterio de "no imputar"
+    del resto del script.
+
+Segunda iteración de features (decisión 2026-08-30, misma tanda): el
+resultado con ndvi_lag_1year/evi_lag_1year mejoró pero siguió lejos de la
+meta, así que se probó qué tan autocorrelacionado está NDVI/EVI a rezagos
+más cortos (ver notebooks/ o el chequeo hecho aparte): la correlación a 1
+ventana atrás (~16 días) resultó ser la MÁS fuerte de todas (0.69-0.70 en
+NDVI, más que el rezago de 1 año) — decisión del equipo: sí vale la pena
+acercar el rezago, la disponibilidad operativa de MODIS para un rezago de
+~16 días es asumible.
+  - `ndvi_lag1w` / `evi_lag1w`: valor de NDVI/EVI de 1 ventana atrás
+    (~16 días), por región. Como ya se exige k>=2 para el lag2 climático,
+    este rezago corto NUNCA queda nulo en las filas que sobreviven — no
+    agrega NaN nuevos.
+  - `doy_sin` / `doy_cos`: codificación cíclica (seno/coseno) del día del
+    año de `window_start`, para que el modelo tenga una señal directa y
+    continua de estacionalidad (la autocorrelación de NDVI se vuelve
+    negativa a mitad de año y vuelve a subir cerca del año completo — un
+    patrón estacional clásico que esta codificación deja explícito, en vez
+    de que el modelo tenga que inferirlo indirectamente de otras
+    variables). No depende de ninguna fuente externa, se deriva de la
+    fecha — sin nulos.
 """
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 CLEAN_DIR = Path(__file__).resolve().parents[2] / "data" / "clean"
@@ -78,6 +128,18 @@ MAX_VARS = ["tmax_c"]
 MIN_VARS = ["tmin_c"]
 ERA5_VARS = SUM_VARS + MEAN_VARS + MAX_VARS + MIN_VARS
 N_LAGS = 3  # lag0, lag1, lag2
+
+# ~1 año, en unidades de "ventanas MODIS": duración promedio real de ventana
+# en este dataset ≈ 15.9 días -> 365 / 15.9 ≈ 23 ventanas.
+LAG_1YEAR_WINDOWS = 23
+TREND_WINDOW_2Y = 2 * LAG_1YEAR_WINDOWS  # ~2 años
+TREND_MIN_PERIODS = LAG_1YEAR_WINDOWS  # exige al menos ~1 año de historia real
+
+# Rezago corto (~16 días, "un par de semanas") de la propia variable Y — la
+# autocorrelación real medida es la más fuerte de todas las que se probaron
+# (ver docstring del módulo). Con k>=2 ya exigido para el lag2 climático,
+# k - LAG_CLOSE_WINDOWS >= 1 siempre, así que esta feature nunca sale nula.
+LAG_CLOSE_WINDOWS = 1
 
 LAG_LABELS = {0: "ventana actual", 1: "ventana inmediatamente anterior", 2: "dos ventanas atrás"}
 
@@ -181,6 +243,22 @@ def build_region_dataset(region, era5, fldas, modis):
         row["et_resolution"] = "monthly"
         row["deficit_hidrico"] = row["precip_mm_lag0"] - row["pet_mm_lag0"]
 
+        idx_1year = k - LAG_1YEAR_WINDOWS
+        if idx_1year >= 0:
+            row["ndvi_lag_1year"] = modis_region.iloc[idx_1year]["ndvi"]
+            row["evi_lag_1year"] = modis_region.iloc[idx_1year]["evi"]
+        else:
+            row["ndvi_lag_1year"] = None
+            row["evi_lag_1year"] = None
+
+        idx_close = k - LAG_CLOSE_WINDOWS
+        if idx_close >= 0:
+            row["ndvi_lag1w"] = modis_region.iloc[idx_close]["ndvi"]
+            row["evi_lag1w"] = modis_region.iloc[idx_close]["evi"]
+        else:
+            row["ndvi_lag1w"] = None
+            row["evi_lag1w"] = None
+
         records.append(row)
 
     return pd.DataFrame(records), n_dropped_lag2, n_dropped_no_close
@@ -194,6 +272,30 @@ def add_soil_moist_anomaly(df):
     doy = df["window_start"].dt.dayofyear
     climatology = df.groupby([df["region"], doy])["soil_moist_layer1_lag0"].transform("mean")
     df["soil_moist_anomaly"] = df["soil_moist_layer1_lag0"] - climatology
+    return df
+
+
+def add_deficit_hidrico_trend(df):
+    """deficit_hidrico_trend2y = promedio móvil retrospectivo de
+    deficit_hidrico por región (ventana de TREND_WINDOW_2Y ~2 años, mínimo
+    TREND_MIN_PERIODS ~1 año de historia real). Retrospectivo puro (rolling
+    de pandas es right-aligned): solo usa ventanas anteriores o la actual,
+    nunca futuras. Requiere que df ya esté ordenado por región y fecha."""
+    df = df.sort_values(["region", "window_start"]).copy()
+    df["deficit_hidrico_trend2y"] = df.groupby("region")["deficit_hidrico"].transform(
+        lambda s: s.rolling(window=TREND_WINDOW_2Y, min_periods=TREND_MIN_PERIODS).mean()
+    )
+    return df
+
+
+def add_seasonal_cyclical(df):
+    """doy_sin / doy_cos = codificación cíclica del día del año de
+    window_start. Se deriva solo de la fecha, no de ninguna fuente externa
+    -- sin nulos, sin riesgo de fuga."""
+    df = df.copy()
+    doy = df["window_start"].dt.dayofyear
+    df["doy_sin"] = np.sin(2 * np.pi * doy / 365.25)
+    df["doy_cos"] = np.cos(2 * np.pi * doy / 365.25)
     return df
 
 
@@ -222,6 +324,13 @@ def write_data_dictionary(dataset):
     add_row("et_resolution", "categórico fijo", "FLDAS / NASA (vía Google Earth Engine)", "Siempre 'monthly' — deja explícito que et_mm es de menor resolución temporal que el resto de variables")
     add_row("deficit_hidrico", "mm", "Derivado (ERA5-Land)", "precip_mm_lag0 - pet_mm_lag0")
     add_row("soil_moist_anomaly", "m3/m3", "Derivado (ERA5-Land)", "soil_moist_layer1_lag0 - promedio histórico de esa variable por región y día del año de inicio de ventana, a través de todos los años disponibles")
+    add_row("ndvi_lag_1year", "índice (-1 a 1)", "MODIS MOD13Q1.061", "NDVI de ~1 año atrás (23 ventanas atrás) en la misma región — señal de persistencia/nivel, no de la ventana actual")
+    add_row("evi_lag_1year", "índice (-1 a 1)", "MODIS MOD13Q1.061", "EVI de ~1 año atrás (23 ventanas atrás) en la misma región — señal de persistencia/nivel, no de la ventana actual")
+    add_row("deficit_hidrico_trend2y", "mm", "Derivado (ERA5-Land)", "Promedio móvil retrospectivo de deficit_hidrico (~2 años, mínimo ~1 año de historia), por región — régimen climático de largo plazo")
+    add_row("ndvi_lag1w", "índice (-1 a 1)", "MODIS MOD13Q1.061", "NDVI de 1 ventana atrás (~16 días) en la misma región — autocorrelación de corto plazo, la más fuerte medida entre todos los rezagos probados")
+    add_row("evi_lag1w", "índice (-1 a 1)", "MODIS MOD13Q1.061", "EVI de 1 ventana atrás (~16 días) en la misma región — autocorrelación de corto plazo")
+    add_row("doy_sin", "adimensional (-1 a 1)", "Derivado (fecha)", "sin(2*pi*día_del_año/365.25) — codificación cíclica de estacionalidad")
+    add_row("doy_cos", "adimensional (-1 a 1)", "Derivado (fecha)", "cos(2*pi*día_del_año/365.25) — codificación cíclica de estacionalidad")
 
     lines = ["# Diccionario de datos — dataset_modelo.csv", ""]
     lines.append("| columna | unidad | fuente | % nulos | descripción |")
@@ -264,6 +373,8 @@ def main():
 
     dataset = pd.concat(frames, ignore_index=True)
     dataset = add_soil_moist_anomaly(dataset)
+    dataset = add_deficit_hidrico_trend(dataset)
+    dataset = add_seasonal_cyclical(dataset)
     dataset = dataset.sort_values(["region", "window_start"]).reset_index(drop=True)
 
     ordered_cols = ["region", "window_start", "window_end", "ndvi", "evi"]
@@ -276,6 +387,13 @@ def main():
         "et_resolution",
         "deficit_hidrico",
         "soil_moist_anomaly",
+        "ndvi_lag_1year",
+        "evi_lag_1year",
+        "deficit_hidrico_trend2y",
+        "ndvi_lag1w",
+        "evi_lag1w",
+        "doy_sin",
+        "doy_cos",
     ]
     dataset = dataset[ordered_cols]
 

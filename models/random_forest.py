@@ -53,6 +53,14 @@ GRID_KEYS = list(PARAM_GRID.keys())
 N_CV_SPLITS = 5
 RANDOM_STATE = 42
 Y_VARIABLES = ["ndvi", "evi"]
+# Nombre bajo el que se registra este modelo en results/ (log_run y
+# upsert_model_comparison). Cambialo (p. ej. "random_forest_v2_features")
+# para correr un experimento con un dataset/feature-set distinto sin
+# sobreescribir la fila anterior en model_comparison.csv -- log_run siempre
+# agrega (nunca sobreescribe), pero upsert_model_comparison sí reemplaza la
+# fila existente de (modelo, y_variable), así que un MODEL_LABEL distinto es
+# la forma de mantener ambos resultados visibles a la vez.
+MODEL_LABEL = "random_forest"
 
 
 def evaluate(model, X_test, y_test):
@@ -84,7 +92,7 @@ def run_for_target(y_variable, train_val, test_final, fecha_corte):
 
     baseline_params = {k: v for k, v in baseline.get_params().items() if k in GRID_KEYS}
     log_run(
-        modelo="random_forest",
+        modelo=MODEL_LABEL,
         tipo_run="baseline",
         y_variable=y_variable,
         fecha_corte=fecha_corte,
@@ -116,7 +124,7 @@ def run_for_target(y_variable, train_val, test_final, fecha_corte):
     r2_t, rmse_t, pearson_t = evaluate(tuned, X_test, y_test)  # primer y único toque de test_final para tuning
 
     log_run(
-        modelo="random_forest",
+        modelo=MODEL_LABEL,
         tipo_run="tuned",
         y_variable=y_variable,
         fecha_corte=fecha_corte,
@@ -144,7 +152,7 @@ def run_for_target(y_variable, train_val, test_final, fecha_corte):
     resumen["por_region"] = por_region
 
     # --- Comparación de modelos (siempre el resultado tuned) ---
-    upsert_model_comparison(modelo="random_forest", y_variable=y_variable, r2=r2_t, rmse=rmse_t, pearson=pearson_t)
+    upsert_model_comparison(modelo=MODEL_LABEL, y_variable=y_variable, r2=r2_t, rmse=rmse_t, pearson=pearson_t)
 
     return resumen
 
