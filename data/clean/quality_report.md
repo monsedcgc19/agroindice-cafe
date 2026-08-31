@@ -9,7 +9,7 @@ Valores de region: ['Cauca', 'Narino']
 
 - Archivo crudo: `raw\clima\era5_diario.csv`
 - Archivo limpio: `clean\clima\era5_diario.csv`
-- Filas: 19352
+- Filas: 19368
 - Duplicados (date+region), filas marcadas: 0
 - Filas con algún valor fuera de rango físico: 0
 
@@ -33,14 +33,16 @@ Valores de region: ['Cauca', 'Narino']
 
 | archivo      | variable          |       min |       max |     media |       std |   n_validos |
 |:-------------|:------------------|----------:|----------:|----------:|----------:|------------:|
-| era5_diario  | dewpoint_c        | 11.9416   | 19.7043   | 16.7812   | 1.19074   |       19352 |
-| era5_diario  | lai_high          |  3.7401   |  4.04902  |  3.90017  | 0.0764256 |       19352 |
-| era5_diario  | pet_mm            |  1.21946  | 10.6209   |  5.16004  | 1.22396   |       19352 |
-| era5_diario  | precip_mm         |  0.444378 | 95.1988   | 16.3168   | 9.81535   |       19352 |
-| era5_diario  | soil_moist_layer1 |  0.345445 |  0.457582 |  0.435721 | 0.0124757 |       19352 |
-| era5_diario  | tmax_c            | 17.8354   | 26.1039   | 22.4004   | 1.1338    |       19352 |
-| era5_diario  | tmean_c           | 16.4063   | 22.2096   | 19.0321   | 1.02633   |       19352 |
-| era5_diario  | tmin_c            | 11.8637   | 20.0517   | 16.7412   | 1.27213   |       19352 |
+| era5_diario  | dewpoint_c        | 11.9416   | 19.7043   | 16.7817   | 1.19075   |       19368 |
+| era5_diario  | lai_high          |  3.7401   |  4.04902  |  3.90011  | 0.0764622 |       19368 |
+| era5_diario  | pet_mm            |  1.21946  | 10.6209   |  5.16014  | 1.22421   |       19368 |
+| era5_diario  | precip_mm         |  0.444378 | 95.1988   | 16.3154   | 9.81445   |       19368 |
+| era5_diario  | soil_moist_layer1 |  0.345445 |  0.457582 |  0.435715 | 0.0124742 |       19368 |
+| era5_diario  | soil_moist_layer2 |  0.352515 |  0.461897 |  0.438266 | 0.0128098 |       19368 |
+| era5_diario  | soil_moist_layer3 |  0.366946 |  0.46184  |  0.434781 | 0.0125099 |       19368 |
+| era5_diario  | tmax_c            | 17.8354   | 26.1039   | 22.4011   | 1.13419   |       19368 |
+| era5_diario  | tmean_c           | 16.4063   | 22.2096   | 19.0329   | 1.02668   |       19368 |
+| era5_diario  | tmin_c            | 11.8637   | 20.0517   | 16.742    | 1.27231   |       19368 |
 | et_mensual   | et_mm             |  2.86951  |  4.50902  |  3.6799   | 0.292097  |         634 |
 | modis_16dias | evi               |  0.347847 |  0.577413 |  0.463174 | 0.0338684 |        1218 |
 | modis_16dias | ndvi              |  0.605759 |  0.837154 |  0.757351 | 0.0358558 |        1218 |
@@ -54,6 +56,8 @@ Valores de region: ['Cauca', 'Narino']
 | era5_diario  | pet_mm            |         0 |           0 |
 | era5_diario  | precip_mm         |         0 |           0 |
 | era5_diario  | soil_moist_layer1 |         0 |           0 |
+| era5_diario  | soil_moist_layer2 |         0 |           0 |
+| era5_diario  | soil_moist_layer3 |         0 |           0 |
 | era5_diario  | tmax_c            |         0 |           0 |
 | era5_diario  | tmean_c           |         0 |           0 |
 | era5_diario  | tmin_c            |         0 |           0 |
@@ -73,6 +77,8 @@ Valores de region: ['Cauca', 'Narino']
 | pet_mm | 0 | - |
 | et_mm | 0 | - |
 | soil_moist_layer1 | 0 | 1 |
+| soil_moist_layer2 | 0 | 1 |
+| soil_moist_layer3 | 0 | 1 |
 | lai_high | 0 | 10 |
 | ndvi | -1 | 1 |
 | evi | -1 | 1 |

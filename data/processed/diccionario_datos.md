@@ -11,7 +11,9 @@
 | pet_mm_lag0 | mm, suma de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Evapotranspiración potencial acumulada (signo corregido en 04_clean_transform.py respecto al crudo) — ventana actual |
 | tmean_c_lag0 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura media — ventana actual |
 | dewpoint_c_lag0 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Punto de rocío — ventana actual |
-| soil_moist_layer1_lag0 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 — ventana actual |
+| soil_moist_layer1_lag0 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 (0-7cm) — ventana actual |
+| soil_moist_layer2_lag0 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 2 (7-28cm) — ventana actual |
+| soil_moist_layer3_lag0 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 3 (28-100cm) — ventana actual |
 | lai_high_lag0 | índice, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Índice de área foliar, vegetación alta — ventana actual |
 | tmax_c_lag0 | °C, máximo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura máxima — ventana actual |
 | tmin_c_lag0 | °C, mínimo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura mínima — ventana actual |
@@ -19,7 +21,9 @@
 | pet_mm_lag1 | mm, suma de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Evapotranspiración potencial acumulada (signo corregido en 04_clean_transform.py respecto al crudo) — ventana inmediatamente anterior |
 | tmean_c_lag1 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura media — ventana inmediatamente anterior |
 | dewpoint_c_lag1 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Punto de rocío — ventana inmediatamente anterior |
-| soil_moist_layer1_lag1 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 — ventana inmediatamente anterior |
+| soil_moist_layer1_lag1 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 (0-7cm) — ventana inmediatamente anterior |
+| soil_moist_layer2_lag1 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 2 (7-28cm) — ventana inmediatamente anterior |
+| soil_moist_layer3_lag1 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 3 (28-100cm) — ventana inmediatamente anterior |
 | lai_high_lag1 | índice, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Índice de área foliar, vegetación alta — ventana inmediatamente anterior |
 | tmax_c_lag1 | °C, máximo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura máxima — ventana inmediatamente anterior |
 | tmin_c_lag1 | °C, mínimo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura mínima — ventana inmediatamente anterior |
@@ -27,7 +31,9 @@
 | pet_mm_lag2 | mm, suma de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Evapotranspiración potencial acumulada (signo corregido en 04_clean_transform.py respecto al crudo) — dos ventanas atrás |
 | tmean_c_lag2 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura media — dos ventanas atrás |
 | dewpoint_c_lag2 | °C, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Punto de rocío — dos ventanas atrás |
-| soil_moist_layer1_lag2 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 — dos ventanas atrás |
+| soil_moist_layer1_lag2 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 1 (0-7cm) — dos ventanas atrás |
+| soil_moist_layer2_lag2 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 2 (7-28cm) — dos ventanas atrás |
+| soil_moist_layer3_lag2 | m3/m3 (0-1), promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Humedad volumétrica del suelo, capa 3 (28-100cm) — dos ventanas atrás |
 | lai_high_lag2 | índice, promedio de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Índice de área foliar, vegetación alta — dos ventanas atrás |
 | tmax_c_lag2 | °C, máximo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura máxima — dos ventanas atrás |
 | tmin_c_lag2 | °C, mínimo de la ventana | ERA5-Land / ECMWF (vía Google Earth Engine) | 0.00% | Temperatura mínima — dos ventanas atrás |
