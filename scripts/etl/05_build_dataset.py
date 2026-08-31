@@ -24,8 +24,8 @@ Reglas de alineación:
   - ERA5 en 3 versiones no traslapadas por ventana: lag0 (actual), lag1
     (ventana inmediatamente anterior), lag2 (dos ventanas atrás).
     Agregación: suma para precip_mm/pet_mm, promedio para tmean_c/
-    dewpoint_c/soil_moist_layer1/lai_high, máximo para tmax_c, mínimo para
-    tmin_c.
+    dewpoint_c/soil_moist_layer1/soil_moist_layer2/soil_moist_layer3/
+    lai_high, máximo para tmax_c, mínimo para tmin_c.
   - precip_mm_roll32 = precip_mm_lag0 + precip_mm_lag1 (no es un lag: junta
     las dos ventanas más recientes en un solo número, ~32 días).
   - FLDAS et_mm_lag0/et_mm_lag1: valor del mes calendario que contiene el
@@ -123,7 +123,7 @@ DATASET_PATH = PROCESSED_DIR / "dataset_modelo.csv"
 DICT_PATH = PROCESSED_DIR / "diccionario_datos.md"
 
 SUM_VARS = ["precip_mm", "pet_mm"]
-MEAN_VARS = ["tmean_c", "dewpoint_c", "soil_moist_layer1", "lai_high"]
+MEAN_VARS = ["tmean_c", "dewpoint_c", "soil_moist_layer1", "soil_moist_layer2", "soil_moist_layer3", "lai_high"]
 MAX_VARS = ["tmax_c"]
 MIN_VARS = ["tmin_c"]
 ERA5_VARS = SUM_VARS + MEAN_VARS + MAX_VARS + MIN_VARS
@@ -148,7 +148,9 @@ BASE_META = {
     "pet_mm": ("mm, suma de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Evapotranspiración potencial acumulada (signo corregido en 04_clean_transform.py respecto al crudo)"),
     "tmean_c": ("°C, promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Temperatura media"),
     "dewpoint_c": ("°C, promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Punto de rocío"),
-    "soil_moist_layer1": ("m3/m3 (0-1), promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Humedad volumétrica del suelo, capa 1"),
+    "soil_moist_layer1": ("m3/m3 (0-1), promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Humedad volumétrica del suelo, capa 1 (0-7cm)"),
+    "soil_moist_layer2": ("m3/m3 (0-1), promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Humedad volumétrica del suelo, capa 2 (7-28cm)"),
+    "soil_moist_layer3": ("m3/m3 (0-1), promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Humedad volumétrica del suelo, capa 3 (28-100cm)"),
     "lai_high": ("índice, promedio de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Índice de área foliar, vegetación alta"),
     "tmax_c": ("°C, máximo de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Temperatura máxima"),
     "tmin_c": ("°C, mínimo de la ventana", "ERA5-Land / ECMWF (vía Google Earth Engine)", "Temperatura mínima"),

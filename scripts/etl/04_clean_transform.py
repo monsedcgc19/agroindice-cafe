@@ -77,6 +77,8 @@ PLAUSIBLE_RANGES = {
     "pet_mm": (0, None),
     "et_mm": (0, None),
     "soil_moist_layer1": (0, 1),
+    "soil_moist_layer2": (0, 1),
+    "soil_moist_layer3": (0, 1),
     "lai_high": (0, 10),
     "ndvi": (-1, 1),
     "evi": (-1, 1),

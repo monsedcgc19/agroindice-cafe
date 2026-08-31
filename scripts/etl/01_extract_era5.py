@@ -22,6 +22,16 @@ El rango de fechas se acota por la disponibilidad real de MODIS (variable
 proxy de rendimiento, la más restrictiva) — no se hardcodea un año de inicio.
 No se rellena ningún valor faltante con cero: si un pixel/banda queda
 enmascarado en una región, reduceRegion lo deja como nulo.
+
+Capas de suelo más profundas (decisión 2026-08-30): además de
+`soil_moist_layer1` (0-7cm, muy superficial, reacciona a cada lluvia
+individual y es ruidosa), se agregan `soil_moist_layer2` (7-28cm) y
+`soil_moist_layer3` (28-100cm) de ERA5-Land — cubren razonablemente la zona
+de raíces de un cafetal adulto e integran humedad sobre un plazo más largo,
+con la hipótesis de que correlacionan mejor con el estrés hídrico real de
+la planta que la capa 1 sola. No se agrega `layer_4` (100-289cm, más
+profunda que la zona de raíces típica) para no sobresaturar el dataset con
+una capa de relevancia agronómica dudosa.
 """
 
 from datetime import date, timedelta
@@ -54,6 +64,8 @@ BAND_NAMES = [
     "dewpoint_c",
     "pet_mm",
     "soil_moist_layer1",
+    "soil_moist_layer2",
+    "soil_moist_layer3",
     "lai_high",
 ]
 
@@ -66,11 +78,15 @@ def prep_bands(image):
     dew_c = image.select("dewpoint_temperature_2m").subtract(273.15).rename("dewpoint_c")
     precip_mm = image.select("total_precipitation_sum").multiply(1000).rename("precip_mm")
     pet_mm = image.select("potential_evaporation_sum").multiply(1000).rename("pet_mm")
-    soil_moist = image.select("volumetric_soil_water_layer_1").rename("soil_moist_layer1")
+    soil_moist1 = image.select("volumetric_soil_water_layer_1").rename("soil_moist_layer1")
+    soil_moist2 = image.select("volumetric_soil_water_layer_2").rename("soil_moist_layer2")
+    soil_moist3 = image.select("volumetric_soil_water_layer_3").rename("soil_moist_layer3")
     lai_high = image.select("leaf_area_index_high_vegetation").rename("lai_high")
 
     return (
-        precip_mm.addBands([tmax_c, tmin_c, tmean_c, dew_c, pet_mm, soil_moist, lai_high])
+        precip_mm.addBands(
+            [tmax_c, tmin_c, tmean_c, dew_c, pet_mm, soil_moist1, soil_moist2, soil_moist3, lai_high]
+        )
         .copyProperties(image, ["system:time_start"])
     )
 
