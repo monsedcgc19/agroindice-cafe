@@ -1,0 +1,2 @@
+modelo,objetivo,escenario,variables,rmse_train,rmse_cv,rmse_std,rmse_pct_media,mae_cv,r2_cv,pearson_cv,riesgo_base_proxy,calidad_datos,brecha_rmse,cumple_r2,cumple_rmse,cumple_pearson,cumple_riesgo_base,cumple_calidad,cumple_todas
+Ensemble Ridge 55% + Gradient Boosting 45%,NDVI,clima_mas_historia_ndvi,39,0.018308684840037493,0.021462297736304578,0.0026523143168314,2.8463738810658596,0.01641606564210404,0.5963114088600598,0.7894012359432439,0.3768456886912791,0.9572815533980582,0.003153612896267085,False,True,True,True,True,False
