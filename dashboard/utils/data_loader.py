@@ -96,3 +96,33 @@ def score_model_on_region(region=None):
     y_pred = load_winning_model().predict(X)
     r2, rmse, pearson = compute_metrics(y, y_pred)
     return {"r2": r2, "rmse": rmse, "pearson": pearson, "n": len(y)}
+
+
+@st.cache_data
+def predict_test_final(region=None):
+    """Predicciones del modelo YA ENTRENADO (sin reentrenar) sobre
+    test_final, con fecha y región -- para graficar observado vs. estimado
+    en el tiempo. Mismo filtro de región que score_model_on_region."""
+    _ensure_models_on_path()
+    from _experiment_utils import prepare_features
+
+    test_final = load_test_final()
+    subset = test_final if region is None else test_final[test_final["region"] == region]
+    X, y = prepare_features(subset, "ndvi")
+    y_pred = load_winning_model().predict(X)
+
+    out = subset[["window_start", "region"]].reset_index(drop=True).copy()
+    out["ndvi_real"] = y.reset_index(drop=True)
+    out["ndvi_predicho"] = y_pred
+    out["error_abs"] = (out["ndvi_real"] - out["ndvi_predicho"]).abs()
+    return out.sort_values("window_start").reset_index(drop=True)
+
+
+@st.cache_data
+def load_feature_importances(top_n=10):
+    """Importancia de features del modelo ganador YA ENTRENADO (sin
+    reentrenar) -- lee feature_importances_/feature_names_in_ directamente
+    del RandomForestRegressor serializado, no recalcula nada."""
+    model = load_winning_model()
+    importances = pd.Series(model.feature_importances_, index=model.feature_names_in_)
+    return importances.sort_values(ascending=False).head(top_n)
