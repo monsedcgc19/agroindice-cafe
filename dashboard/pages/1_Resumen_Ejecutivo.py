@@ -22,10 +22,12 @@ from utils.data_loader import (
     load_model_comparison,
     score_model_on_region,
 )
-from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox
+from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox, style_nav_links
 
 configure_page("Resumen ejecutivo")
 style_narrow_selectbox()
+style_nav_links()
+st.page_link("Inicio.py", label="Inicio", icon=":material/home:")
 
 # Metas de la Tabla de Requerimientos (ver CONTEXT.md, "## Metas de métricas") --
 # son los umbrales fijos del proyecto, no valores derivados de datos.

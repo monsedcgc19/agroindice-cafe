@@ -28,10 +28,12 @@ from utils.data_loader import (
     load_model_comparison,
     predict_test_final,
 )
-from utils.ui import configure_page, style_narrow_selectbox
+from utils.ui import configure_page, style_narrow_selectbox, style_nav_links
 
 configure_page("Validación analítica")
 style_narrow_selectbox()
+style_nav_links()
+st.page_link("Inicio.py", label="Inicio", icon=":material/home:")
 
 REGION_OPTIONS = {"Ambos (Cauca + Nariño)": None, "Cauca": "Cauca", "Nariño": "Narino"}
 # Familias de modelo realmente probadas -> etiqueta de despliegue.

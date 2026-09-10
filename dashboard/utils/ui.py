@@ -109,6 +109,30 @@ def style_narrow_selectbox(max_width=280):
     )
 
 
+def style_nav_links():
+    """Da a TODOS los st.page_link de la página un fondo gris y borde
+    redondeado (recuadro tipo botón), en vez del link de texto plano por
+    defecto de Streamlit. Se puede llamar una sola vez por página."""
+    st.markdown(
+        """
+        <style>
+        [data-testid="stPageLink"] a[data-testid="stPageLink-NavLink"] {
+            background-color: #f3f4f6 !important;
+            border: 1px solid #d0d5dd !important;
+            border-radius: 10px !important;
+            padding: 10px 16px !important;
+            text-decoration: none !important;
+        }
+        [data-testid="stPageLink"] a[data-testid="stPageLink-NavLink"]:hover {
+            background-color: #e5e7eb !important;
+            border-color: #98a2b3 !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def _one_line(html):
     """Streamlit/markdown trata cualquier línea indentada con 4+ espacios
     como bloque de código -- colapsar todo a una sola línea evita que un
