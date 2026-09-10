@@ -32,10 +32,12 @@ from utils.data_loader import (
     model_artifact_calibration_date,
     predict_test_final,
 )
-from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox
+from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox, style_nav_links
 
 configure_page("Índice y activaciones")
 style_narrow_selectbox()
+style_nav_links()
+st.page_link("Inicio.py", label="Inicio", icon=":material/home:")
 
 REGION_OPTIONS = {"Ambos (Cauca + Nariño)": None, "Cauca": "Cauca", "Nariño": "Narino"}
 
