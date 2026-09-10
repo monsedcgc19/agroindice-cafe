@@ -6,6 +6,7 @@ se leen tal cual las dejó la fase de modelado (ver CONTEXT.md).
 """
 
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import joblib
@@ -126,3 +127,26 @@ def load_feature_importances(top_n=10):
     model = load_winning_model()
     importances = pd.Series(model.feature_importances_, index=model.feature_names_in_)
     return importances.sort_values(ascending=False).head(top_n)
+
+
+@st.cache_data
+def compute_ndvi_threshold(region, percentile):
+    """Umbral de activación = percentil `percentile` (0-100) de la
+    distribución HISTÓRICA de NDVI observado (dataset_modelo.csv completo,
+    no solo test_final) para una región puntual ("Cauca" o "Narino").
+
+    Es una calibración descriptiva -- caracteriza qué tan bajo es "bajo"
+    para el NDVI normal de esa zona -- no una predicción, así que se apoya
+    en todo el histórico disponible (train_val + test_final) sin que eso
+    sea fuga de información hacia el modelo. Ver la pantalla de Índice y
+    Activaciones para la regla completa; es una propuesta de primera
+    iteración, no un umbral actuarialmente validado."""
+    df = load_dataset()
+    serie = df.loc[df["region"] == region, "ndvi"]
+    return serie.quantile(percentile / 100)
+
+
+def model_artifact_calibration_date():
+    """Fecha de modificación del .joblib serializado -- versión/fecha
+    visible junto al resultado (R10), sin inventar un número de versión."""
+    return datetime.fromtimestamp(MODEL_ARTIFACT_PATH.stat().st_mtime)
