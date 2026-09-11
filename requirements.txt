@@ -1,0 +1,21 @@
+# Dependencias para desplegar dashboard/ (Streamlit Community Cloud).
+#
+# NO es un lock completo del entorno de desarrollo del proyecto -- scripts/etl/
+# (Google Earth Engine) y models/*.py (XGBoost, entrenamiento) no corren en el
+# dashboard desplegado, así que sus dependencias (earthengine-api, xgboost,
+# jupyter, etc.) se dejan fuera a propósito.
+#
+# Versiones fijadas exactas (no rangos): scikit-learn, joblib y numpy deben
+# coincidir con las que entrenaron y serializaron
+# models/artifacts/random_forest_ndvi.joblib -- una versión distinta de
+# scikit-learn puede fallar al cargar el .joblib o, peor, cargarlo sin error
+# pero con comportamiento distinto. Si el modelo se vuelve a entrenar y
+# serializar más adelante, reinstalar con estas mismas versiones (o
+# actualizar este archivo a la par) antes de sobreescribir el .joblib.
+streamlit==1.63.0
+pandas==2.3.3
+numpy==2.3.4
+scikit-learn==1.7.2
+scipy==1.16.3
+joblib==1.5.2
+altair==6.2.2
