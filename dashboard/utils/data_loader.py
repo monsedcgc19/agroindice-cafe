@@ -130,6 +130,20 @@ def load_feature_importances(top_n=10):
 
 
 @st.cache_data
+def load_feature_matrix():
+    """Matriz de features (X) del dataset COMPLETO, ya con las mismas
+    dummies de región que ve el modelo (prepare_features) -- fuente única
+    de promedios y rangos históricos para la predicción interactiva, así
+    los nombres/orden de columnas quedan garantizados idénticos a
+    model.feature_names_in_ sin repetir la lógica de dummy-encoding."""
+    _ensure_models_on_path()
+    from _experiment_utils import prepare_features
+
+    X, _ = prepare_features(load_dataset(), "ndvi")
+    return X
+
+
+@st.cache_data
 def compute_ndvi_threshold(region, percentile):
     """Umbral de activación = percentil `percentile` (0-100) de la
     distribución HISTÓRICA de NDVI observado (dataset_modelo.csv completo,
