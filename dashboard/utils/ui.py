@@ -61,6 +61,12 @@ _ICON_PATHS = {
         "5 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .4"
         '14.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z"/>'
     ),
+    "x_circle": (
+        '<path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.36'
+        "5 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06"
+        "L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 "
+        '12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"/>'
+    ),
 }
 
 
@@ -189,6 +195,34 @@ def render_kpi_card(col, *, icon, label, value, bg_color, border_color, delta_te
                 {value}
             </div>
             {delta_html}
+        </div>
+        """
+    )
+    col.markdown(card_html, unsafe_allow_html=True)
+
+
+def render_info_card(col, *, icon, title, items, bg_color, border_color, text_color="#101828", height=None):
+    """Tarjeta con ícono + título + lista de viñetas -- para bloques
+    descriptivos (p. ej. "qué sí/no hace" en la portada), a diferencia de
+    render_kpi_card que muestra un único valor numérico.
+
+    `height` (px), si se pasa, es una altura FIJA (no un mínimo) -- así dos
+    tarjetas lado a lado quedan igual de altas sin importar si una tiene
+    viñetas más largas o más numerosas que la otra. Sin `height`, la
+    tarjeta simplemente se ajusta a su contenido (comportamiento anterior)."""
+    height_css = f"height:{height}px;" if height is not None else ""
+    items_html = "".join(f"<li style='margin-bottom:6px;'>{item}</li>" for item in items)
+    card_html = _one_line(
+        f"""
+        <div style="background-color:{bg_color}; border:1px solid {border_color};
+                    border-radius:16px; padding:20px 22px; box-sizing:border-box; {height_css}">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                {icon}
+                <span style="font-size:16px; font-weight:700; color:{text_color};">{title}</span>
+            </div>
+            <ul style="margin:0; padding-left:20px; font-size:14px; color:{text_color}; line-height:1.5;">
+                {items_html}
+            </ul>
         </div>
         """
     )
