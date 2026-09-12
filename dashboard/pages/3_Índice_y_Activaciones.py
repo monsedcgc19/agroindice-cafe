@@ -21,7 +21,18 @@ Metodología propuesta:
   ventana como evento potencial.
 - Todo se evalúa sobre test_final (nunca visto en el ajuste del modelo),
   igual que en la pantalla de Validación analítica.
+
+Además del historial sobre test_final, la sección "Simular un escenario"
+deja construir una ventana hipotética a mano: sliders para las variables
+más relevantes del modelo (las mismas de Validación analítica, salvo
+doy_sin/doy_cos -- se reemplazan por un selector de mes, más intuitivo que
+mover un seno/coseno) y el resto de las features en su promedio histórico
+(load_feature_matrix().mean()). Es un "qué pasaría si", no una nueva fila
+de test_final -- el modelo no se reentrena ni se evalúa con esto.
 """
+
+import datetime
+import math
 
 import pandas as pd
 import streamlit as st
@@ -29,6 +40,9 @@ import streamlit as st
 from utils.data_loader import (
     compute_ndvi_threshold,
     load_data_quality_pct,
+    load_feature_importances,
+    load_feature_matrix,
+    load_winning_model,
     model_artifact_calibration_date,
     predict_test_final,
 )
@@ -165,6 +179,92 @@ st.info(
     "si se prioriza la explicabilidad frente a directivos no técnicos por encima de aprovechar toda la "
     "señal multivariada que ya capturó el modelo."
 )
+
+st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
+
+# --- Simular un escenario ---
+st.subheader("Simular un escenario")
+st.caption(
+    "Ajusta las variables más relevantes del modelo (mismas de Validación analítica) y calcula el NDVI "
+    "que predeciría el modelo YA ENTRENADO para esa combinación -- el resto de las variables se fija en "
+    "su promedio histórico. El día del año reemplaza a doy_sin/doy_cos (las 2 variables cíclicas que ve "
+    "el modelo) por un selector de mes, más intuitivo que mover un seno/coseno directamente."
+)
+
+modelo = load_winning_model()
+X_hist = load_feature_matrix()
+medias = X_hist.mean()
+
+# Etiquetas legibles para las variables más relevantes -- ver
+# data/processed/diccionario_datos.md para unidad y fuente de cada una.
+FEATURE_LABELS = {
+    "ndvi_lag1w": "NDVI (ventana anterior, ~16 días)",
+    "ndvi_lag_1year": "NDVI de hace ~1 año (misma época)",
+    "soil_moist_layer3_lag0": "Humedad de suelo, capa profunda 28-100cm",
+    "soil_moist_layer2_lag1": "Humedad de suelo, capa media 7-28cm (ventana anterior)",
+    "soil_moist_layer1_lag1": "Humedad de suelo, capa superficial 0-7cm (ventana anterior)",
+    "dewpoint_c_lag1": "Punto de rocío °C (ventana anterior)",
+    "dewpoint_c_lag2": "Punto de rocío °C (hace 2 ventanas)",
+    "pet_mm_lag1": "Evapotranspiración potencial, mm (ventana anterior)",
+}
+# doy_sin/doy_cos se manejan aparte con el selector de mes, no como slider.
+slider_features = [f for f in load_feature_importances(top_n=10).index if f not in ("doy_sin", "doy_cos")]
+
+sim_col1, sim_col2 = st.columns(2)
+slider_values = {}
+for i, feat in enumerate(slider_features):
+    columna = sim_col1 if i % 2 == 0 else sim_col2
+    minimo, maximo, promedio = float(X_hist[feat].min()), float(X_hist[feat].max()), float(medias[feat])
+    with columna:
+        slider_values[feat] = st.slider(
+            FEATURE_LABELS.get(feat, feat.replace("_", " ")),
+            min_value=minimo,
+            max_value=maximo,
+            value=promedio,
+            step=(maximo - minimo) / 100 if maximo > minimo else 0.01,
+        )
+
+sim_col3, sim_col4 = st.columns(2)
+with sim_col3:
+    sim_departamento_label = st.selectbox("Departamento (escenario)", ["Cauca", "Nariño"], key="sim_depto")
+    sim_region = "Narino" if sim_departamento_label == "Nariño" else "Cauca"
+with sim_col4:
+    MESES = [
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    ]
+    mes_label = st.selectbox("Mes (estacionalidad)", MESES, index=6, key="sim_mes")
+    dia_del_anio = datetime.date(2023, MESES.index(mes_label) + 1, 15).timetuple().tm_yday
+
+if st.button("Calcular", type="primary"):
+    fila = medias.copy()
+    for feat, val in slider_values.items():
+        fila[feat] = val
+    fila["region_Cauca"] = 1.0 if sim_region == "Cauca" else 0.0
+    fila["region_Narino"] = 1.0 if sim_region == "Narino" else 0.0
+    fila["doy_sin"] = math.sin(2 * math.pi * dia_del_anio / 365.25)
+    fila["doy_cos"] = math.cos(2 * math.pi * dia_del_anio / 365.25)
+
+    X_escenario = pd.DataFrame([fila])[list(modelo.feature_names_in_)]
+    ndvi_escenario = float(modelo.predict(X_escenario)[0])
+    umbral_escenario = compute_ndvi_threshold(sim_region, percentil)
+    activaria = ndvi_escenario < umbral_escenario
+
+    res1, res2, res3 = st.columns(3)
+    res1.metric("NDVI predicho (escenario)", f"{ndvi_escenario:.3f}")
+    res2.metric(f"Umbral vigente ({sim_departamento_label}, percentil {percentil}%)", f"{umbral_escenario:.3f}")
+    with res3:
+        if activaria:
+            st.error("🔴 Activaría indemnización (simulada)")
+        else:
+            st.success("✅ No activaría indemnización")
+
+    st.caption(
+        "Escenario ilustrativo: cada variable se ajusta de forma independiente, sin las correlaciones "
+        "naturales que tendrían en la realidad (p. ej. humedad de suelo y punto de rocío suelen moverse "
+        "juntos) -- combinaciones poco realistas pueden caer fuera de lo que el modelo vio en "
+        "entrenamiento. No reemplaza una cotización ni una activación real."
+    )
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
 
