@@ -140,11 +140,11 @@ st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
 # --- Regla de activación (borrador) ---
 st.subheader("Regla de activación")
 st.info(
-    f"**SI** índice climático (NDVI predicho por el modelo) < umbral (percentil {percentil}% histórico "
+    f"**Si** índice climático (NDVI predicho por el modelo) < umbral (percentil {percentil}% histórico "
     "de NDVI observado en esa región)\n\n"
     "**Entonces** marcar la ventana como evento potencial de estrés hídrico/vegetativo.\n\n"
     "El percentil, la variable de índice y la ventana temporal son ajustables arriba para explorar "
-    "sensibilidad -- esta es una propuesta de primera iteración, no un umbral calibrado con datos de "
+    "sensibilidad. Esta es una propuesta de primera iteración, no un umbral calibrado con datos de "
     "pérdida real."
 )
 
@@ -172,9 +172,9 @@ st.caption(f"{len(tabla_hist)} de {len(pred_df)} ventanas mostradas · test_fina
 st.info(
     "**Nota metodológica**: se eligió NDVI predicho por el modelo como índice climático porque es "
     "funcionalmente equivalente a lo que R1 y R5 ya validan (riesgo base = 1−r² contra el proxy de "
-    "pérdida; correlación de Pearson del modelo) y conserva la latencia de una variable climática -- no "
+    "pérdida; correlación de Pearson del modelo) y conserva la latencia de una variable climática - no "
     "depende de la lectura satelital ni de su enmascarado por nubes. Una alternativa más simple y "
-    "auditable -- usar una variable climática cruda (p. ej. déficit hídrico) directamente como índice, "
+    "auditable sería usar una variable climática cruda (p. ej. déficit hídrico) directamente como índice, "
     "sin pasar por el modelo -- queda como posible iteración futura a evaluar con el equipo, sobre todo "
     "si se prioriza la explicabilidad frente a directivos no técnicos por encima de aprovechar toda la "
     "señal multivariada que ya capturó el modelo."
@@ -186,9 +186,8 @@ st.markdown("<div style='margin-top:32px'></div>", unsafe_allow_html=True)
 st.subheader("Simular un escenario")
 st.caption(
     "Ajusta las variables más relevantes del modelo (mismas de Validación analítica) y calcula el NDVI "
-    "que predeciría el modelo YA ENTRENADO para esa combinación -- el resto de las variables se fija en "
-    "su promedio histórico. El día del año reemplaza a doy_sin/doy_cos (las 2 variables cíclicas que ve "
-    "el modelo) por un selector de mes, más intuitivo que mover un seno/coseno directamente."
+    "que predeciría el modelo ya entrenado para esa combinación -- el resto de las variables se fija en "
+    "su promedio histórico."
 )
 
 modelo = load_winning_model()
@@ -286,7 +285,7 @@ with col_c:
     st.markdown("**Trazabilidad**")
     st.caption(
         f"Modelo Random Forest (NDVI), calibrado {fecha_modelo:%Y-%m-%d}. Metodología del índice y el "
-        "umbral: ver el docstring de esta página y CONTEXT.md."
+        "umbral: ver el docstring de esta página."
     )
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)

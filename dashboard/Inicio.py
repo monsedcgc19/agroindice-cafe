@@ -1,9 +1,7 @@
 """
 Inicio.py — Portada del dashboard AgroÍndice Café. Es el punto de entrada
-obligatorio de la app (el archivo que recibe `streamlit run`) -- Streamlit
-siempre lo muestra como la primera entrada del menú lateral, así que en vez
-de dejarlo como el scaffold de prueba original (que solo confirmaba que
-utils/data_loader.py cargaba bien), aquí vive la portada real: qué es el
+de la app (el archivo que recibe `streamlit run`) -- Streamlit siempre lo muestra 
+como la primera entrada del menú lateral, y se muestra un resumen de qué es el
 proyecto y accesos a las 3 pantallas del mockup del Prototipo Fachada.
 """
 
@@ -30,17 +28,17 @@ with col1:
     st.markdown("**Qué sí hace este prototipo**")
     st.markdown(
         "- Compara 3 modelos candidatos (Random Forest, XGBoost, Ridge + Gradient Boosting) para "
-        "predecir NDVI a partir del clima.\n"
+        "predecir NDVI a partir de variables climáticas.\n"
         "- Valida el modelo recomendado contra las metas de la Tabla de Requerimientos.\n"
         "- Propone un índice climático interpretable y umbrales de activación por zona (borrador, no "
         "validado actuarialmente)."
     )
 with col2:
-    st.markdown("**Qué NO hace este prototipo**")
+    st.markdown("**Qué no hace este prototipo**")
     st.markdown(
         "- No calcula primas ni indemnizaciones reales.\n"
         "- No es una plataforma operativa ni emite pólizas.\n"
-        "- No tiene actualización automática de datos (decisión explícita de alcance del equipo)."
+        "- No tiene actualización automática de datos climáticos y satelitales"
     )
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
@@ -62,7 +60,7 @@ with nav2:
         icon=":material/query_stats:",
         use_container_width=True,
     )
-    st.caption("Comparación de modelos candidatos, variables relevantes, y observado vs. estimado.")
+    st.caption("Comparación de modelos candidatos, variables relevantes y comparativo de observado vs. estimado.")
 with nav3:
     st.page_link(
         "pages/3_Índice_y_Activaciones.py",
@@ -70,7 +68,7 @@ with nav3:
         icon=":material/flag:",
         use_container_width=True,
     )
-    st.caption("Propuesta de índice climático, umbral por zona, e historial de activaciones (borrador).")
+    st.caption("Propuesta de índice climático, umbral por zona, historial de activaciones y sección interactiva de predicción NDVI")
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
 fecha_modelo = model_artifact_calibration_date()

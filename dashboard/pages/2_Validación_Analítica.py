@@ -1,21 +1,18 @@
 """
 2_Validacion_Analitica.py — Pantalla 2 del mockup del Prototipo Fachada:
 comparación de modelos candidatos, variables más relevantes, y observado
-vs. estimado en el tiempo para el modelo ganador. Ver CONTEXT.md,
-"## Resultados del modelado".
+vs. estimado en el tiempo para el modelo ganador. 
 
 Adaptaciones respecto al mockup original (docs/Entrega Prototipo
 Fachada.pdf, sección 10, Pantalla 2), ahora que el modelado ya se hizo:
 - Los modelos candidatos reales fueron Random Forest, XGBoost y un
-  ensemble Ridge + Gradient Boosting -- no SVM ni redes neuronales, que
-  nunca se probaron (ver CONTEXT.md).
+  ensemble Ridge + Gradient Boosting.
 - La columna "Recall" del mockup no aplica a un problema de regresión; se
   reemplaza por Pearson, una de las 3 métricas oficiales de validación
   (R3-R5 de la Tabla de Requerimientos).
-- La variable Y ya se decidió (NDVI, no EVI) -- ver "Decisión de equipo
-  (2026-09-05)" en CONTEXT.md -- así que esta pantalla no repite el filtro
-  "Objetivo" del mockup como una elección todavía abierta; el resultado de
-  EVI queda solo como referencia en el pie de la tabla.
+- La variable Y ya se decidió (NDVI, no EVI) así que esta pantalla 
+ no repite el filtro "Objetivo" del mockup como una elección todavía abierta; 
+ el resultado de EVI queda solo como referencia.
 """
 
 import altair as alt
@@ -79,8 +76,8 @@ tabla_mostrar = pd.DataFrame(
 )
 st.table(tabla_mostrar)
 
-# Referencia de EVI (variable Y descartada) -- solo entre random_forest y
-# xgboost, el ensemble nunca se evaluó para EVI (ver CONTEXT.md).
+# Referencia de EVI (variable Y descartada) - solo entre random_forest y
+# xgboost, el ensemble nunca se evaluó para EVI.
 evi_rows = comparison[
     (comparison["y_variable"] == "evi") & (comparison["modelo"].str.startswith(("random_forest", "xgboost")))
 ]
@@ -90,7 +87,7 @@ st.caption(
     f"Validación con separación temporal (85% train_val / 15% test_final, corte cronológico) para las 3 "
     f"familias. La variable Y ya se decidió como NDVI -- el mismo ejercicio con EVI (descartado) alcanzó "
     f"como máximo R²={mejor_evi['r2']:.3f} ({mejor_evi_familia}), peor que las 3 familias con NDVI en esta "
-    f"tabla. Ver CONTEXT.md, '## Resultados del modelado'."
+    f"tabla."
 )
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
@@ -116,7 +113,7 @@ chart = (
 )
 st.altair_chart(chart, use_container_width=True)
 st.caption(
-    "Importancia de features (impureza/Gini) del modelo ya entrenado -- no se recalcula. Nombres de "
+    "Importancia de features (impureza/Gini) del modelo ya entrenado. Nombres de "
     "columna tal como aparecen en data/processed/diccionario_datos.md (ahí está la unidad y fuente de "
     "cada una)."
 )
@@ -139,7 +136,7 @@ else:
 st.line_chart(wide)
 st.caption(
     f"test_final · {departamento_label} · n={len(pred_df)} ventanas · predicciones del modelo ya "
-    f"entrenado (sin reentrenar) sobre datos que nunca vio durante el ajuste ni el tuning."
+    f"entrenado sobre datos que nunca vio durante el ajuste ni el tuning."
 )
 
 st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
@@ -148,6 +145,5 @@ st.markdown("<div style='margin-top:24px'></div>", unsafe_allow_html=True)
 st.warning(
     "**Representatividad geográfica**: las variables climáticas de entrada son un promedio sobre el "
     "polígono departamental completo de Cauca y Nariño (FAO/GAUL level1), que incluye franja Pacífica y "
-    "piedemonte amazónico -- no son específicas de la zona cafetera andina. Ver CONTEXT.md, "
-    "'Limitación conocida: el clima es un promedio departamental'."
+    "piedemonte amazónico -- no son específicas de la zona cafetera andina."
 )

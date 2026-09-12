@@ -1,14 +1,14 @@
 """
-1_Resumen_Ejecutivo.py — Pantalla 1 del mockup del Prototipo Fachada: KPIs
+1_Resumen_Ejecutivo.py - Pantalla 1 del mockup del Prototipo Fachada: KPIs
 ejecutivos, comparación de riesgo base contra la meta, y estado del modelo
 frente a la Tabla de Requerimientos (R1-R15). Todos los valores se leen de
-results/model_comparison.csv y data/processed/diccionario_datos.md -- no se
+results/model_comparison.csv y data/processed/diccionario_datos.md, no se
 recalculan ni se hardcodean (ver utils/data_loader.py).
 
 El filtro de Departamento solo afecta la tarjeta de Riesgo base y su
-gráfico: ambos se recalculan evaluando el modelo YA ENTRENADO (sin
-reentrenar) sobre el subconjunto de test_final de esa región
-(score_model_on_region). El resto de la pantalla (Estado, Calidad de
+gráfico: ambos se recalculan evaluando el modelo ya entrenado sobre 
+el subconjunto de test_final de esa región (score_model_on_region). 
+El resto de la pantalla (Estado, Calidad de
 datos, Modelo recomendado) sigue reflejando el resultado agregado y
 oficialmente documentado en model_comparison.csv, sin importar el filtro.
 """
@@ -29,16 +29,16 @@ style_narrow_selectbox()
 style_nav_links()
 st.page_link("Inicio.py", label="Inicio", icon=":material/home:")
 
-# Metas de la Tabla de Requerimientos (ver CONTEXT.md, "## Metas de métricas") --
-# son los umbrales fijos del proyecto, no valores derivados de datos.
+# Metas de la Tabla de Requerimientos --
+# son los umbrales fijos del proyecto
 META_R2 = 0.60
 META_RMSE_PCT = 15.0
 META_PEARSON = 0.65
 META_RIESGO_BASE_PCT = 50.0
 META_CALIDAD_DATOS_PCT = 90.0
 
-# "Narino" (sin tilde) es como queda el valor en dataset_modelo.csv -- ver
-# REGIONS en models/_experiment_utils.py. La etiqueta visible sí lleva tilde.
+# "Narino" es como queda el valor en dataset_modelo.csv -- ver
+# REGIONS en models/_experiment_utils.py.
 REGION_OPTIONS = {"Ambos (Cauca + Nariño)": None, "Cauca": "Cauca", "Nariño": "Narino"}
 
 st.title("Resumen ejecutivo")
@@ -47,8 +47,7 @@ comparison = load_model_comparison()
 
 # La fila "random_forest"/"ndvi" tal cual quedó en model_comparison.csv está
 # desactualizada (corrida del 2026-08-29, antes del filtro SummaryQA y las
-# capas de humedad de suelo profundas -- ver CONTEXT.md, "## Resultados del
-# modelado"). La fila que sí corresponde al modelo ganador reportado
+# capas de humedad de suelo profundas. La fila que sí corresponde al modelo ganador reportado
 # (R²=0.329, Pearson=0.768) es la de mayor R² entre todas las corridas
 # "random_forest*" para ndvi -- así se sigue sin hardcodear el número.
 rf_ndvi = comparison[
@@ -123,9 +122,9 @@ chart_df = pd.DataFrame(
 )
 st.bar_chart(chart_df)
 st.caption(
-    f"Tarjeta y gráfico recalculados evaluando el modelo ya entrenado (sin reentrenar) sobre "
+    f"Tarjeta y gráfico recalculados evaluando el modelo ya entrenado sobre "
     f"test_final · {departamento_label} · n={metrics_filtradas['n']} ventanas. El resto de "
-    f"la pantalla (Estado, Calidad de datos) sigue el resultado agregado y documentado."
+    f"la pantalla  sigue el resultado agregado y documentado."
 )
 
 # --- Estado frente a la Tabla de Requerimientos (siempre agregado, no cambia con el filtro) ---
@@ -135,7 +134,7 @@ cumple_pearson = pearson_oficial >= META_PEARSON
 evidencia_suficiente = cumple_r2 or cumple_rmse or cumple_pearson
 estado = "Continuar" if evidencia_suficiente else "Detener"
 
-st.subheader(f"Estado: {estado}")
+st.subheader(f"Estado frente a Tabla de Requerimientos")
 
 criterios = pd.DataFrame(
     [
@@ -165,7 +164,7 @@ st.caption(
     "actuales se cumplen 2 de 3 (RMSE y Pearson): aunque el riesgo base "
     "(1−R²) todavía no alcanza la meta de ≤50%, hay evidencia suficiente para "
     "continuar -- R² queda documentado como el punto más débil a mejorar si el "
-    "tiempo del prototipo lo permite, no como un bloqueante."
+    "tiempo del prototipo lo permite, no como una limitante para avanzar."
 )
 
 # --- Advertencias obligatorias ---
@@ -179,6 +178,5 @@ st.warning(
     "**Representatividad geográfica**: las variables climáticas de entrada son "
     "un promedio sobre el polígono departamental completo de Cauca y Nariño "
     "(FAO/GAUL level1), que incluye franja Pacífica y piedemonte amazónico -- "
-    "no son específicas de la zona cafetera andina. Ver CONTEXT.md, "
-    "'Limitación conocida: el clima es un promedio departamental'."
+    "no son específicas de la zona cafetera andina."
 )
