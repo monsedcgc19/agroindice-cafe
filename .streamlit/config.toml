@@ -1,0 +1,11 @@
+# Config de Streamlit para el despliegue en Streamlit Community Cloud.
+#
+# fileWatcherType = "none": desactiva el vigilante de archivos (watchdog)
+# que detecta cambios de código para hot-reload en desarrollo local. En
+# Cloud no hace falta -- cada push reconstruye el contenedor desde cero --
+# y dejarlo activo puede agotar el límite de inotify del contenedor
+# (OSError: [Errno 24] inotify instance limit reached), lo que deja la app
+# sirviendo una versión vieja del código indefinidamente sin recoger
+# cambios nuevos. Ver logs de despliegue del 2026-09-12.
+[server]
+fileWatcherType = "none"
