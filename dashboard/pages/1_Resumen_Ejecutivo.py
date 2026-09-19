@@ -20,9 +20,17 @@ from utils.data_loader import (
     load_data_quality_pct,
     load_dataset,
     load_model_comparison,
+    model_artifact_calibration_date,
     score_model_on_region,
 )
-from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox, style_nav_links
+from utils.ui import (
+    configure_page,
+    icon_svg,
+    render_kpi_card,
+    render_version_badge,
+    style_narrow_selectbox,
+    style_nav_links,
+)
 
 configure_page("Resumen ejecutivo")
 style_narrow_selectbox()
@@ -42,6 +50,7 @@ META_CALIDAD_DATOS_PCT = 90.0
 REGION_OPTIONS = {"Ambos (Cauca + Nariño)": None, "Cauca": "Cauca", "Nariño": "Narino"}
 
 st.title("Resumen ejecutivo")
+render_version_badge(model_artifact_calibration_date(), extra="metas: Tabla de Requerimientos R1-R15")
 
 comparison = load_model_comparison()
 

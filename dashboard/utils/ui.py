@@ -146,6 +146,29 @@ def _one_line(html):
     return " ".join(line.strip() for line in html.splitlines() if line.strip())
 
 
+def render_version_badge(model_date, extra=None):
+    """Insignia de versión/fecha visible al inicio de cada pantalla --
+    R10 de la Tabla de Requerimientos: "Los supuestos, variables y
+    umbrales usados deben quedar versionados. Versión o fecha visible
+    junto a cada resultado mostrado." Un único indicador por pantalla, no
+    uno repetido junto a cada número: todos los resultados de una misma
+    pantalla vienen del mismo modelo/dataset, así que basta con dejarlo
+    visible antes de cualquier resultado, no repetirlo tarjeta por
+    tarjeta. Se llama justo después de st.title() en cada pantalla."""
+    detalle = f" · {extra}" if extra else ""
+    badge_html = _one_line(
+        f"""
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-bottom:20px;
+                    padding:5px 14px; border-radius:999px; background-color:#f3f4f6;
+                    border:1px solid #d0d5dd; font-size:13px; color:#475467;">
+            {icon_svg("clock", "#475467", size=14, margin_bottom=0)}
+            <span>Modelo Random Forest (NDVI) · calibrado {model_date:%Y-%m-%d}{detalle}</span>
+        </div>
+        """
+    )
+    st.markdown(badge_html, unsafe_allow_html=True)
+
+
 def render_kpi_card(col, *, icon, label, value, bg_color, border_color, delta_text=None, delta_good=None, height=180):
     """Tarjeta de KPI con ícono, fondo de color, bordes redondeados y un
     badge de delta opcional (verde si delta_good=True, rojo si False). La
