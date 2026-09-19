@@ -46,7 +46,14 @@ from utils.data_loader import (
     model_artifact_calibration_date,
     predict_test_final,
 )
-from utils.ui import configure_page, icon_svg, render_kpi_card, style_narrow_selectbox, style_nav_links
+from utils.ui import (
+    configure_page,
+    icon_svg,
+    render_kpi_card,
+    render_version_badge,
+    style_narrow_selectbox,
+    style_nav_links,
+)
 
 configure_page("Índice y activaciones")
 style_narrow_selectbox()
@@ -56,6 +63,7 @@ st.page_link("Inicio.py", label="Inicio", icon=":material/home:")
 REGION_OPTIONS = {"Ambos (Cauca + Nariño)": None, "Cauca": "Cauca", "Nariño": "Narino"}
 
 st.title("Índice y activaciones")
+render_version_badge(model_artifact_calibration_date(), extra="umbral y regla: propuesta de primera iteración")
 st.warning(
     "**Esta pantalla es una propuesta de primera iteración, no una calibración actuarial.** El índice, "
     "el umbral y las activaciones que se muestran abajo son ilustrativos/simulados.  "

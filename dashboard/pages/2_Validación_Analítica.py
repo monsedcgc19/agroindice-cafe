@@ -23,9 +23,10 @@ from utils.data_loader import (
     load_dataset,
     load_feature_importances,
     load_model_comparison,
+    model_artifact_calibration_date,
     predict_test_final,
 )
-from utils.ui import configure_page, style_narrow_selectbox, style_nav_links
+from utils.ui import configure_page, render_version_badge, style_narrow_selectbox, style_nav_links
 
 configure_page("Validación analítica")
 style_narrow_selectbox()
@@ -44,6 +45,7 @@ FAMILIES = {
 }
 
 st.title("Validación analítica")
+render_version_badge(model_artifact_calibration_date(), extra="variables: data/processed/diccionario_datos.md")
 
 ndvi_mean = load_dataset()["ndvi"].mean()
 comparison = load_model_comparison()
