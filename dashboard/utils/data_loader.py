@@ -160,7 +160,19 @@ def compute_ndvi_threshold(region, percentile):
     return serie.quantile(percentile / 100)
 
 
+# Fecha real en que random_forest_ndvi.joblib se agregó al repo -- ver
+# `git log --follow -- models/artifacts/random_forest_ndvi.joblib`
+# (commit d4ab48a, 2026-09-07). Es una constante fija a propósito, NO
+# se lee de MODEL_ARTIFACT_PATH.stat().st_mtime: cada redeploy de
+# Streamlit Cloud hace un `git clone` nuevo, y git no conserva la fecha
+# original del commit en el mtime del archivo -- le pone la fecha del
+# checkout (o sea, "hoy"), así que la fecha mostrada cambiaba sola en cada
+# reboot. Si el modelo se vuelve a calibrar y re-serializar más adelante,
+# actualizar esta constante a mano en ese momento (no antes).
+MODEL_CALIBRATION_DATE = datetime(2026, 9, 7)
+
+
 def model_artifact_calibration_date():
-    """Fecha de modificación del .joblib serializado -- versión/fecha
-    visible junto al resultado (R10), sin inventar un número de versión."""
-    return datetime.fromtimestamp(MODEL_ARTIFACT_PATH.stat().st_mtime)
+    """Fecha de calibración del modelo ganador -- versión/fecha visible
+    junto al resultado (R10). Fecha fija, ver MODEL_CALIBRATION_DATE."""
+    return MODEL_CALIBRATION_DATE
